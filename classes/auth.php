@@ -792,6 +792,9 @@ class auth extends \auth_plugin_base {
                 ]);
                 $event->trigger();
 
+                // Store userid in session for Amplitude initialization
+                $SESSION->saml2_error_userid = $user->id;
+
                 $PAGE->requires->js_call_amd('auth_saml2/amplitude', 'init');
 
                 $this->error_page(get_string('suspendeduser', 'auth_saml2', $uid));
