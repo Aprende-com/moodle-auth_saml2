@@ -665,7 +665,7 @@ class auth extends \auth_plugin_base {
      * @param array $attributes
      */
     public function saml_login_complete($attributes) {
-        global $CFG, $USER, $SESSION;
+        global $CFG, $USER, $SESSION, $PAGE;
 
         if ($this->config->attrsimple) {
             $attributes = $this->simplify_attr($attributes);
@@ -791,6 +791,11 @@ class auth extends \auth_plugin_base {
                     ],
                 ]);
                 $event->trigger();
+
+                // Store userid in session for Amplitude initialization
+                $SESSION->saml2_error_userid = $user->id;
+
+                $PAGE->requires->js_call_amd('auth_saml2/amplitude', 'init');
 
                 $this->error_page(get_string('suspendeduser', 'auth_saml2', $uid));
             }
